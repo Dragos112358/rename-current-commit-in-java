@@ -1,0 +1,27 @@
+<idea-plugin>
+    <actions>
+        <action id="RenameCommitAction" class="com.example.gitplugin.RenameCurrentCommitAction"
+                text="Rename Current Commit" description="Amend the last commit message">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+        </action>
+    </actions>
+
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.example.demo</id>
+
+    <!-- Public plugin name should be written in Title Case. -->
+    <name>Demo</name>
+
+    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+  ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+    </extensions>
+</idea-plugin>
