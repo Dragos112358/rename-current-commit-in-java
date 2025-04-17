@@ -1,0 +1,374 @@
+class DecisionTree:
+    """
+    Clasa care implementează un arbore de decizie. 
+    Arborele poate fi construit folosind algoritmul ID3 sau Random Tree, în funcție de strategia de împărțire specificată.
+    """
+    def __init__(self,
+                 split_strategy: str = 'random',
+                 max_depth: int = np.inf,
+                 min_samples_per_node: int = 1):
+        """
+        Constructor pentru un arbore de decizie
+        
+        Args:
+            split_strategy (string, optional): 
+                Strategia folosită pentru alegerea împărțirii într-un nod. Aceasta poate fi:
+                - 'id3' - alege împărțirea care maximizează câștigul informațional (folosind algoritmul ID3)
+                - 'random' - alege aleator o împărțire
+                Defaults to 'random'.
+            max_depth (int, optional): 
+                Adâncimea maximă a arborelui. Defaults to infinity.
+            min_samples_per_node (int, optional): 
+                Numărul minim de exemple dintr-un nod pentru a face o împărțire. 
+                Defaults to 1.
+        """
+        self._root: DecisionTreeNode | None = None # Rădăcina arborelui
+        self._split_strategy: str = split_strategy
+        self._max_depth: int = max_depth
+        self._min_samples_per_node: int = min_samples_per_node
+        
+        
+    @staticmethod
+    def most_frequent_class(y: pd.Series) -> str:
+        """
+        Obține clasa majoritară din setul de date
+        
+        Args:
+            y (pd.Series): 
+                Vectorul de clase. Fiecare element reprezintă clasa unui exemplu din setul de date
+        
+        Returns:
+            str: 
+                Clasa majoritară din setul de date
+        
+        Examples:
+            >>> most_frequent_class(pd.Series(['a', 'a', 'b', 'b', 'b']))
+            'b'
+        """
+        # TODO 1. Obțineți clasa majoritară din setul de date
+        # HINT: Folosiți funcția mode() pentru a obține clasa majoritară
+        return None
+    
+    
+    @staticmethod
+    def compute_entropy(y: pd.Series) -> float:
+        """
+        Calculează entropia setului de date
+        
+        Args:
+            y (pd.Series): 
+                Vectorul de clase. Fiecare element reprezintă clasa unui exemplu din setul de date
+        
+        Returns:
+            float: 
+                Entropia setului de date
+        
+        Examples:
+            >>> DecisionTree.compute_entropy(pd.Series(['a', 'a', 'b', 'b', 'b']))
+            0.9709505944546686
+        """
+        # TODO 2. Calculați entropia setului de date
+        # HINT: 
+        #   Pentru a obține numărul de apariții ale fiecărei clase puteți folosi funcția value_counts()
+        # Exemplu: 
+        #   y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+        #   y.value_counts() -> {'b': 3, 'a': 2}
+        return 0
+        
+    
+    @staticmethod
+    def compute_information_gain(X: pd.DataFrame, y: pd.Series, feature: str) -> float:
+        """
+        Calculează câștigul informațional al unui atribut din setul de date
+        
+        Args:
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+            feature (str): 
+                Numele atributului pentru care se calculează câștigul informațional
+        
+        Returns:
+            float: 
+                Câștigul informațional al atributului
+        
+        Examples:
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> DecisionTree.compute_information_gain(X, y, 'a')
+            0.4199730940219749
+        """
+        # TODO 3. Calculați câștigul informațional al atributului `feature`
+        # HINT: 
+        #   Pentru a selecta doar acele exemple care au valoarea `value` pentru atributul `feature` puteți folosi
+        #   următoarea expresie: X[X[feature] == value]. Analog, se pot obține clasele corespunzătoare acestor exemple
+        #   folosind expresia y[X[feature] == value].
+        
+        # Se calculează entropia inițială a setului de date
+        # Se calculează entropia finală a setului de date:
+        #   Se selectează submulțimea de exemple care au valoarea `value` pentru atributul `feature`
+        #   Se calculează entropia submulțimii
+        #   Se calculează ponderea submulțimii
+        #   Se adaugă entropia submulțimii ponderată la entropia finală
+        # Câștigul informațional se calculează ca diferența între entropia inițială și entropia finală
+        return 0
+    
+    
+    def _select_random_split_feature(self, X: pd.DataFrame, y: pd.Series, attribute_list: list[str]) -> str:
+        """
+        Alege în mod aleator atributul după care se face împărțirea într-un nod
+        
+        Args:
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+            attribute_list (list[str]): 
+                Lista de atribute rămase pentru construcția arborelui
+        
+        Returns:
+            str: 
+                Numele atributului după care se face împărțirea
+                
+        Examples:
+            >>> # Funcția este privată și nu poate fi apelată în afara clasei
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> self._select_random_split_feature(X, y, ['a', 'b'])
+            'a'
+        """
+        # TODO 4. Returnați un atribut aleator din lista `attribute_list`
+        # HINT:
+        #   Pentru a alege un element aleator dintr-o listă puteți folosi funcția np.random.choice()
+        return None
+    
+    
+    def _select_best_split_feature(self, X: pd.DataFrame, y: pd.Series, attribute_list: list[str]) -> str:
+        """
+        Alege atributul după care se face împărțirea într-un nod folosind criteriul de câștig informațional
+        
+        Args:
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+            attribute_list (list[str]): 
+                Lista de atribute rămase pentru construcția arborelui
+        
+        Returns:
+            str: 
+                Numele atributului după care se face împărțirea
+                
+        Examples:
+            >>> # Funcția este privată și nu poate fi apelată în afara clasei
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> 
+            >>> # Câștigul informațional:
+            >>> #    - atributul 'a' -> 0.4199730940219749, 
+            >>> #    - atributul 'b' -> 0.17095059445466854
+            >>> self._select_best_split_feature(X, y, ['a', 'b'])
+            'a'
+        """
+        # TODO 5. Returnați atributul care maximizează câștigul informațional
+        #  - Se calculează câștigul informațional pentru fiecare atribut din lista `attribute_list`
+        #  - Se returnează atributul care maximizează câștigul informațional
+        return None
+    
+    
+    def _generate_tree(self,
+                       parent_node: DecisionTreeNode | None,
+                       X: pd.DataFrame,
+                       y: pd.Series,
+                       feature_list: list[str],
+                       select_feature_func: Callable[[pd.DataFrame, pd.Series, list[str]], str]) -> DecisionTreeNode:
+        """
+        Construiește arborele de decizie pe baza setului de date X și a claselor țintă y
+        
+        Args:
+            parent_node (DecisionTreeNode): 
+                Nodul părinte al nodului curent
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+            feature_list (list[str]): 
+                Lista de atribute rămase pentru construcția arborelui
+            select_feature_func (Callable[[pd.DataFrame, pd.Series, list[str]], str]):
+                Funcția folosită pentru a alege atributul după care se face împărțirea
+                
+        Returns:
+            DecisionTreeNode: 
+                Nodul rădăcină al arborelui de decizie construit
+                
+        Examples:
+            >>> # Funcția este privată și nu poate fi apelată în afara clasei
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> self._generate_tree(None, X, y, ['a', 'b'], self._select_random_split_feature)
+            <DecisionTreeNode>
+        """
+        # Se face o copie a listei de atribute pentru a nu modifica lista inițială
+        feature_list = deepcopy(feature_list)
+        
+        # Se creează un nou nod pentru arbore
+        node = DecisionTreeNode()
+        node.depth = parent_node.depth + 1 if parent_node is not None else 0
+        node.score = DecisionTree.compute_entropy(y)  
+        node.num_samples = len(y)
+        node.label = DecisionTree.most_frequent_class(y)
+        
+        # TODO 6. Verificați dacă nodul curent este frunză            
+        # Nodul curent este frunză dacă:
+        #   1. Nu mai sunt atribute rămase
+        #   2. Adâncimea maximă a fost atinsă (se va compara adânimea curentă a nodului cu adâncimea maximă a arborelui)
+        #   3. Numărul minim de exemple dintr-un nod pentru a face o împărțire nu este îndeplinit (se va compara 
+        #   numărul de exemple din nod cu numărul minim de exemple)
+        #   4. Toate exemplele din setul de date aparțin unei singure clase (TIP: se poate folosi funcția `nunique()` 
+        #   din pandas pentru a obține numărul de clase distincte)
+        
+        # TODO 7. Construiți subarborele pentru nodul curent
+        # 1. Se alege atributul după care se face împărțirea (se va folosi funcția `select_feature_func`)
+        # 2. Se actualizează lista de atribute rămase pentru construcția subarborilor
+        # 3. Se actualizează nodul curent cu atributul de împărțire
+        # 4. Se construiesc subarborii pentru fiecare valoare posibilă a atributului de împărțire:
+        #   - Se iterează prin valorile posibile ale atributului de împărțire
+        #   - Se selectează submulțimea de exemple care au valoarea `value` pentru atributul `split_feature`
+        #   - Se construiește subarborele pentru submulțimea de exemple
+        #   - Se adaugă subarborele la nodul curent
+        # HINT:
+        #   Pentru a obține valorile posibile ale unui atribut puteți folosi funcția unique() din pandas:
+        #       X[split_feature].unique()
+        # HINT:
+        #   Pentru a calcula submulțimea de exemple care au valoarea `value` pentru atributul `split_feature` puteți folosi
+        #   următoarele expresii: 
+        #       X[X[split_feature] == value].
+        #       y[X[split_feature] == value].
+
+        # Pentru fiecare valoare `value` a atributului `split_feature`
+        # Se selectează submulțimea de exemple care au valoarea `value` pentru atributul `split_feature`
+        # Se construiește subarborele pentru submulțimea de exemple
+        # Se adaugă subarborele la nodul curent
+        
+        return node
+    
+        
+    def fit(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Construiește arborele de decizie pe baza setului de date. 
+        Va folosi strategia de împărțire specificată în constructor.
+        
+        Args:
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+        """
+        # Selectează funcția de împărțire a nodurilor
+        if self._split_strategy == 'random':
+            select_feature_func = self._select_random_split_feature
+        elif self._split_strategy == 'id3':
+            select_feature_func = self._select_best_split_feature
+        else:
+            raise ValueError(f"Unknown split strategy {self._split_strategy}")
+        
+        self._root = self._generate_tree(parent_node=None,
+                                         X=X,
+                                         y=y,
+                                         feature_list=X.columns.tolist(),
+                                         select_feature_func=select_feature_func)
+        
+    def _predict_once(self, x: pd.Series) -> str:
+        """
+        Realizează predicția clasei pentru un singur exemplu x
+        
+        Args:
+            x (pd.Series): 
+                Atributele unui exemplu din setul de date
+        
+        Returns:
+            str: 
+                Clasa prezisă pentru exemplul x
+                
+        Examples:
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> model = DecisionTree(split_strategy='random')
+            >>> model.fit(X, y)
+            >>> model._predict_once(pd.Series({'a': 1, 'b': 0}))
+            'a'
+        """
+        node = self._root
+        
+        while node.split_feature is not None:
+            if node.split_feature in x and x[node.split_feature] in node.children:
+                node = node.children[x[node.split_feature]]
+            else:
+                break
+        return node.label
+        
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
+        """
+        Realizează predicția claselor pentru un set de date X
+        
+        Args:
+            X (pd.DataFrame): Setul de date (atributele) pentru care se dorește clasificarea
+
+        Returns:
+            np.ndarray: Un vector cu clasele prezise pentru fiecare exemplu din X
+            
+        Examples:
+            >>> X = pd.DataFrame({'a': [1, 1, 1, 0, 0], 'b': [0, 0, 0, 1, 1]})
+            >>> y = pd.Series(['a', 'a', 'b', 'b', 'b'])
+            >>> model = DecisionTree(split_strategy='random')
+            >>> model.fit(X, y)
+            >>> model.predict(X)
+            array(['a', 'a', 'b', 'b', 'b'], dtype=object)
+        """
+        return np.array([self._predict_once(x) for _, x in X.iterrows()])
+    
+    def get_depth(self) -> int:
+        """
+        Returnează adâncimea arborelui
+        
+        Returns:
+            int: Adâncimea arborelui
+        """
+        # Se parcurge arborele pentru a găsi adâncimea maximă
+        def _get_depth(node: DecisionTreeNode) -> int:
+            if node is None:
+                return 0
+            return max([_get_depth(child) for child in node.children.values()], default=0) + 1
+        
+        return _get_depth(self._root)
+    
+    def get_number_of_nodes(self) -> int:
+        """
+        Returnează numărul de noduri din arbore
+        
+        Returns:
+            int: Numărul de noduri din arbore
+        """
+        # Se parcurge arborele pentru a găsi numărul de noduri
+        def _get_number_of_nodes(node: DecisionTreeNode) -> int:
+            if node is None:
+                return 0
+            return sum([_get_number_of_nodes(child) for child in node.children.values()], 0) + 1
+        
+        return _get_number_of_nodes(self._root)
+    
+    def get_tree_graph(self) -> Digraph:
+        """
+        Construiește reprezentarea grafică a arborelui de decizie folosind biblioteca Graphviz
+        
+        Returns:
+            Digraph: Obiectul Digraph în care se construiește reprezentarea arborelui
+        """
+        return self._root.get_tree_graph()
+    
+    def display(self):
+        """
+        Afișează arborele de decizie folosind biblioteca Graphviz. Arborele va fi afișat ca output al celulei.
+        """
+        return self._root.display()

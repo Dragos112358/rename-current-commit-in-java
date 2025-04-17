@@ -1,0 +1,119 @@
+class RandomForest:
+    """
+    Clasa care implementează un clasificator de tip pădure de arbori aleatori.
+    """
+    def __init__(self,
+                 n_estimators: int = 100,
+                 max_depth: int = 3,
+                 min_samples_per_node: int = 1,
+                 split_strategy: str = 'random',
+                 subset_size_ratio: float = 0.5,
+                 subset_feature_ratio: float = 0.75):
+        """
+        Constructor pentru un clasificator de tip pădure de arbori aleatori
+        
+        Args:
+            n_estimators (int, optional): 
+                Numărul de arbori din pădure. Defaults to 100.
+            max_depth (int, optional): 
+                Adâncimea maximă a fiecărui arbore. Defaults to 3.
+            min_samples_per_node (int, optional): 
+                Numărul minim de exemple dintr-un nod pentru a face o împărțire. 
+                Defaults to 1.
+            split_strategy (str, optional):
+                Strategia folosită pentru alegerea împărțirii într-un nod. Aceasta poate fi:
+                - 'id3' - alege împărțirea care maximizează câștigul informațional (folosind algoritmul ID3)
+                - 'random' - alege aleator o împărțire
+                Defaults to 'random'.
+            subset_size_ratio (float, optional):
+                Raportul de dimensiune al subsetului de date folosit pentru construirea fiecărui arbore comparativ cu
+                dimensiunea setului de date inițial. Trebuie să fie un număr între 0 și 1.
+                Defaults to 0.5.
+            subset_feature_ratio (float, optional):
+                Raportul de dimensiune al subsetului de atribute folosit pentru construirea fiecărui arbore comparativ cu
+                dimensiunea setului de atribute inițial. Trebuie să fie un număr între 0 și 1.
+                Defaults to 0.75.
+        """
+        assert 0 < subset_size_ratio <= 1, "subset_size_ratio must be between 0 and 1"
+        assert 0 < subset_feature_ratio <= 1, "subset_feature_ratio must be between 0 and 1"
+        
+        self._trees: list[DecisionTree] = []
+        self._n_estimators: int = n_estimators
+        self._max_depth: int = max_depth
+        self._min_samples_per_node: int = min_samples_per_node
+        self._split_strategy: str = split_strategy
+        self._subset_size_ratio: float = subset_size_ratio
+        self._subset_feature_ratio: float = subset_feature_ratio
+        
+    def fit(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Construiește pădurea de arbori aleatori pe baza setului de date
+        
+        Args:
+            X (pd.DataFrame): 
+                Setul de date (atributele)
+            y (pd.Series): 
+                Clasele corespunzătoare fiecărui exemplu din setul de date
+        """
+        # TODO 8. Construiți pădurea de arbori aleatori
+        # Pentru a construi pădurea de arbori aleatori se vor parcurge următorii pași pentru fiecare estimator:
+        #   1. Se alege un subset aleator din setul de date de antrenare. 
+        #      Subsetul va conține un număr de exemple egal cu 
+        #      `subset_size_ratio` * numărul de exemple din setul de date
+        #   2. Se construiește un arbore de decizie pe subsetul de date
+        #   3. Se adaugă arborele la pădure
+        # HINT:
+        #   Pentru a alege un subset aleator din setul de date puteți folosi funcția np.random.choice() pentru a selecta
+        #   indicii exemplelor care vor fi folosiți în construcția arborelui. Indicii vor fi extrași fără înlocuire. 
+        #   Exemplu:
+        #       indices = np.random.choice(X.shape[0], size=int(self._subset_size_ratio * X.shape[0]), replace=False)
+        #       X_subset = X.iloc[indices]  # Selectează doar exemplele cu indicii aleși (atributele rămân aceleași)
+        #       y_subset = y.iloc[indices]
+        #   Funcția `np.random.choice()` va selecta indicii aleator din intervalul [0, X.shape[0]) și va returna un subset
+        #   de dimensiune `int(self._subset_size_ratio * X.shape[0])` cu indicii selectați.
+        #   Indicii vor fi un np.ndarray de forma [0, 1, 2, 3, 5, 9, ...].
+        #
+        # HINT: 
+        #   Pentru a extrage un subset de atribute puteți folosi următoarea expresie:
+        #       X_subset = X[features]
+        #   unde `features` este o listă cu numele atributelor pe care doriți să le folosiți
+        for _ in range(self._n_estimators):
+            # Se selectează un subset aleator din setul de date
+            # Se selectează din X un subset de atribute
+            # Se construiește un arbore de decizie pe subsetul de date
+            # Se adaugă arborele la pădure
+            pass # TODO: ștergeți această linie de aici
+    
+
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
+        """
+        Realizează predicția claselor pentru un set de date X
+        
+        Args:
+            X (pd.DataFrame): Setul de date (atributele) pentru care se dorește clasificarea
+            
+        Returns:
+            np.ndarray: Un vector cu clasele prezise pentru fiecare exemplu din X
+        """
+        predictions = []
+        
+        for tree in self._trees:
+            predictions.append(tree.predict(X))
+            
+        # Se alege clasa majoritară pentru fiecare exemplu din setul de date
+        return np.array([Counter(pred).most_common(1)[0][0] for pred in np.array(predictions).T])
+    
+    def display(self, max_trees: int = 5):
+        """
+        Afișează arborii din pădure
+        
+        Args:
+            max_trees (int, optional): 
+                Numărul maxim de arbori care vor fi afișați. Defaults to 5.
+        
+        Warnings:
+            Afișarea arborilor nu este indicată pentru un număr mare de estimatori
+        """
+        for i, tree in enumerate(self._trees[:max_trees]):
+            print()
+            tree.display()
